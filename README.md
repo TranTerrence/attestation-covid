@@ -1,4 +1,5 @@
-# Générateur de certificat de déplacement
+# Générateur de certificat de déplacement non officiel
+Cette version basée sur la version officielle offre un bouton supplémentaire qui permet de générer plusieurs certificats de déplacement pour couvrir une plage horaire plus importante.
 
 ## Développer
 
