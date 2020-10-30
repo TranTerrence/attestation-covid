@@ -71,7 +71,7 @@ export async function generatePdf(profile, reasons, pdfBase) {
       const [blankDoc] = await pdfDoc.copyPages(pdfDocTemplate, [0])
       pdfDoc.addPage(blankDoc)
     }
-    const page1 = pdfDoc.getPages()[2 * i]
+    const page1 = pdfDoc.getPages()[i]
 
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
     const drawText = (text, x, y, size = 11) => {
@@ -86,7 +86,7 @@ export async function generatePdf(profile, reasons, pdfBase) {
     reasons
       .split(', ')
       .forEach(reason => {
-        drawText('x', 84, ys[reason], 18)
+        drawText('x', 78, ys[reason] - 2, 18)
       })
 
     let locationSize = getIdealFontSize(font, profile.city, 83, 7, 11)
@@ -123,14 +123,14 @@ export async function generatePdf(profile, reasons, pdfBase) {
       height: 92,
     })
 
-    pdfDoc.addPage()
-    const page2 = pdfDoc.getPages()[2 * i + 1]
-    page2.drawImage(qrImage, {
-      x: 50,
-      y: page2.getHeight() - 350,
-      width: 300,
-      height: 300,
-    })
+    // pdfDoc.addPage()
+    // const page2 = pdfDoc.getPages()[2 * i + 1]
+    // page2.drawImage(qrImage, {
+    //   x: 50,
+    //   y: page2.getHeight() - 350,
+    //   width: 300,
+    //   height: 300,
+    // })
 
   }
 
