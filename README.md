@@ -6,7 +6,7 @@ Cette version basée sur la version officielle offre un bouton supplémentaire q
 ### Installer le projet
 
 ```console
-git clone https://github.com/TranTerrence/attestation-covid/.git
+git clone https://github.com/TranTerrence/attestation-covid.git
 cd attestation-covid
 npm i
 npm start
