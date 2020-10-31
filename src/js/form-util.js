@@ -32,7 +32,7 @@ const conditions = {
     pattern: /\d{2}:\d{2}/g,
   },
   '#field-duree': {
-    length: 1,
+    pattern: /\d{1,2}$/g,
   },
 }
 

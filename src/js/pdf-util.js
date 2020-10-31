@@ -55,15 +55,16 @@ export async function generatePdf(profile, reasons, pdfBase) {
 
   // Add the first copied page
   for (var i = 0; i < duree; i++) {
-    const nextheuresortie = moment(heuresortie, 'HH:mm').add(i, 'hours').format('HH:mm');
-    console.log(nextheuresortie);
+    const nextdate = moment(datesortie + " " + heuresortie, 'DD/MM/YYYY HH:mm').add(i, 'hours');
+    const nextheuresortie = nextdate.format('HH:mm');
+    const nextdatesortie = nextdate.format('DD/MM/YYYY');
     const data = [
       `Cree le: ${creationDate} a ${creationHour}`,
       `Nom: ${lastname}`,
       `Prenom: ${firstname}`,
       `Naissance: ${birthday} a ${placeofbirth}`,
       `Adresse: ${address} ${zipcode} ${city}`,
-      `Sortie: ${datesortie} a ${nextheuresortie}`,
+      `Sortie: ${nextdatesortie} a ${nextheuresortie}`,
       `Motifs: ${reasons}`,
     ].join(';\n ')
     if (i > 0) {
@@ -100,7 +101,7 @@ export async function generatePdf(profile, reasons, pdfBase) {
     }
 
     drawText(profile.city, 105, 177, locationSize)
-    drawText(`${profile.datesortie}`, 91, 153, 11)
+    drawText(`${nextdatesortie}`, 91, 153, 11)
     drawText(`${nextheuresortie}`, 264, 153, 11)
 
     // const shortCreationDate = `${creationDate.split('/')[0]}/${
