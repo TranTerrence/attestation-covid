@@ -138,10 +138,7 @@ export function getReasons(reasonInputs) {
   return reasons
 }
 
-<<<<<<< HEAD
-export function prepareInputs(formInputs, reasonInputs, reasonFieldset, reasonAlert, snackbar) {
-=======
-export function getReasonsObject (reasonInputs) {
+export function getReasonsObject(reasonInputs) {
   return reasonInputs
     .filter((reason) => reason.checked)
     .reduce((map, reason) => {
@@ -150,7 +147,7 @@ export function getReasonsObject (reasonInputs) {
     }, {})
 }
 
-export function prepareInputs (formInputs, reasonInputs, reasonFieldset, reasonAlert, snackbar, releaseDateInput, releaseTimeInput) {
+export function prepareInputs(formInputs, reasonInputs, reasonFieldset, reasonAlert, snackbar, releaseDateInput, releaseTimeInput) {
   const lsProfile = secureLS.get('profile')
   const lsReason = secureLS.get('reason')
   const currentDate = new Date()
@@ -160,7 +157,6 @@ export function prepareInputs (formInputs, reasonInputs, reasonFieldset, reasonA
   // Continue to store data if already stored
   storeDataInput.checked = lsReason || lsProfile
 
->>>>>>> storage
   formInputs.forEach((input) => {
     switch (input.name) {
       case 'datesortie':
