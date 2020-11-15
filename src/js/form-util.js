@@ -37,9 +37,12 @@ const conditions = {
   '#field-heuresortie': {
     pattern: /\d{2}:\d{2}/g,
   },
+  '#field-duree': {
+    pattern: /\d{1,2}$/g,
+  },
 }
 
-function validateAriaFields () {
+function validateAriaFields() {
   return Object.keys(conditions)
     .map((field) => {
       const fieldData = conditions[field]
@@ -59,7 +62,7 @@ function validateAriaFields () {
     .includes(true)
 }
 
-function updateSecureLS (formInputs) {
+function updateSecureLS(formInputs) {
   if (wantDataToBeStored() === true) {
     secureLS.set('profile', getProfile(formInputs))
   } else {
@@ -67,22 +70,22 @@ function updateSecureLS (formInputs) {
   }
 }
 
-function clearSecureLS () {
+function clearSecureLS() {
   secureLS.clear()
 }
 
-function clearForm () {
+function clearForm() {
   const formProfile = $('#form-profile')
   formProfile.reset()
   storeDataInput.checked = false
 }
 
-function setCurrentDate (releaseDateInput) {
+function setCurrentDate(releaseDateInput) {
   const currentDate = new Date()
   releaseDateInput.value = getFormattedDate(currentDate)
 }
 
-function showSnackbar (snackbarToShow, showDuration = 6000) {
+function showSnackbar(snackbarToShow, showDuration = 6000) {
   snackbarToShow.classList.remove('d-none')
   setTimeout(() => snackbarToShow.classList.add('show'), 100)
 
@@ -92,16 +95,16 @@ function showSnackbar (snackbarToShow, showDuration = 6000) {
   }, showDuration)
 }
 
-export function wantDataToBeStored () {
+export function wantDataToBeStored() {
   return storeDataInput.checked
 }
 
-export function setReleaseDateTime (releaseDateInput) {
+export function setReleaseDateTime(releaseDateInput) {
   const loadedDate = new Date()
   releaseDateInput.value = getFormattedDate(loadedDate)
 }
 
-export function toAscii (string) {
+export function toAscii(string) {
   if (typeof string !== 'string') {
     throw new Error('Need string')
   }
@@ -110,7 +113,7 @@ export function toAscii (string) {
   return asciiString
 }
 
-export function getProfile (formInputs) {
+export function getProfile(formInputs) {
   const fields = {}
   for (const field of formInputs) {
     let value = field.value
@@ -126,22 +129,31 @@ export function getProfile (formInputs) {
   return fields
 }
 
-export function getReasons (reasonInputs) {
+export function getReasons(reasonInputs) {
   const reasons = reasonInputs
     .filter(input => input.checked)
     .map(input => input.value).join(', ')
   return reasons
 }
 
-export function prepareInputs (formInputs, reasonInputs, reasonFieldset, reasonAlert, snackbar, releaseDateInput) {
+export function prepareInputs(formInputs, reasonInputs, reasonFieldset, reasonAlert, snackbar, releaseDateInput) {
   const lsProfile = secureLS.get('profile')
-
+  const currentDate = new Date()
+  const formattedDate = getFormattedDate(currentDate)
+  const formattedTime = currentDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
   // Continue to store data if already stored
   storeDataInput.checked = !!lsProfile
   formInputs.forEach((input) => {
     if (input.name && lsProfile && input.name !== 'datesortie' && input.name !== 'heuresortie' && input.name !== 'field-reason') {
       input.value = lsProfile[input.name]
     }
+    if (input.name === 'datesortie') {
+      input.value = formattedDate
+    }
+    if (input.name === 'heuresortie') {
+      input.value = formattedTime
+    }
+
     const exempleElt = input.parentNode.parentNode.querySelector('.exemple')
     if (input.placeholder && exempleElt) {
       input.addEventListener('input', (event) => {
@@ -209,7 +221,7 @@ export function prepareInputs (formInputs, reasonInputs, reasonFieldset, reasonA
   })
 }
 
-export function prepareForm () {
+export function prepareForm() {
   const formInputs = $$('#form-profile input')
   const snackbar = $('#snackbar')
   const reasonInputs = [...$$('input[name="field-reason"]')]
