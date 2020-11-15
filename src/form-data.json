@@ -102,7 +102,7 @@
       "type": "number",
       "contentType": "duree",
       "label": "Nombre d'heures dehors",
-      "placeholder": "2",
+      "placeholder": "3",
       "autocomplete": "",
       "inputmode": "numeric",
       "pattern": "[0-9]{2}",

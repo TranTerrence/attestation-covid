@@ -11,6 +11,7 @@ const createTitle = () => {
   const p = createElement('p', { className: 'msg-info', innerHTML: 'Tous les champs sont obligatoires.' })
   return [h2, p]
 }
+// createElement('div', { className: 'form-group' })
 
 const createFormGroup = ({
   autocomplete = false,
@@ -59,6 +60,8 @@ const createFormGroup = ({
   }
   const validity = createElement('span', validityAttrs)
 
+  const example = createElement('p', { className: 'exemple  basis-100' })
+
   const appendToFormGroup = appendTo(formGroup)
   appendToFormGroup(labelEl)
   appendToFormGroup(inputGroup)
@@ -66,6 +69,7 @@ const createFormGroup = ({
   const appendToInputGroup = appendTo(inputGroup)
   appendToInputGroup(input)
   appendToInputGroup(validity)
+  appendToInputGroup(example)
 
   return formGroup
 }
@@ -123,7 +127,7 @@ const createReasonFieldset = (reasonsData) => {
   return fieldset
 }
 
-export function createForm () {
+export function createForm() {
   const form = $('#form-profile')
   // Évite de recréer le formulaire s'il est déjà créé par react-snap (ou un autre outil de prerender)
   if (form.innerHTML !== '') {

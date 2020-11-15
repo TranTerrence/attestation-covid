@@ -1,16 +1,17 @@
 import { generateQR } from './util'
-import { PDFDocument, range, StandardFonts } from 'pdf-lib'
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import moment from 'moment'
+
 const ys = {
-  travail: 578,
-  achats: 533,
-  sante: 477,
-  famille: 435,
-  handicap: 396,
-  sport_animaux: 358,
-  convocation: 295,
-  missions: 255,
-  enfants: 211,
+  travail: 488,
+  achats: 417,
+  sante: 347,
+  famille: 325,
+  handicap: 291,
+  sport_animaux: 269,
+  convocation: 199,
+  missions: 178,
+  enfants: 157,
 }
 
 export async function generatePdf(profile, reasons, pdfBase) {
@@ -32,6 +33,9 @@ export async function generatePdf(profile, reasons, pdfBase) {
     heuresortie,
     duree,
   } = profile
+
+
+
   const existingPdfBytes = await fetch(pdfBase).then((res) => res.arrayBuffer())
 
   const pdfDoc = await PDFDocument.load(existingPdfBytes)
@@ -51,9 +55,6 @@ export async function generatePdf(profile, reasons, pdfBase) {
   pdfDoc.setProducer('DNUM/SDIT')
   pdfDoc.setCreator('')
   pdfDoc.setAuthor("Ministère de l'intérieur")
-
-
-  // Add the first copied page
   for (var i = 0; i < duree; i++) {
     const nextdate = moment(datesortie + " " + heuresortie, 'DD/MM/YYYY HH:mm').add(i, 'hours');
     const nextheuresortie = nextdate.format('HH:mm');
@@ -66,7 +67,9 @@ export async function generatePdf(profile, reasons, pdfBase) {
       `Adresse: ${address} ${zipcode} ${city}`,
       `Sortie: ${nextdatesortie} a ${nextheuresortie}`,
       `Motifs: ${reasons}`,
-    ].join(';\n ')
+      '', // Pour ajouter un ; aussi au dernier élément
+    ].join(';\n')
+
     if (i > 0) {
       const pdfDocTemplate = await PDFDocument.load(existingPdfBytes)
       const [blankDoc] = await pdfDoc.copyPages(pdfDocTemplate, [0])
@@ -79,15 +82,15 @@ export async function generatePdf(profile, reasons, pdfBase) {
       page1.drawText(text, { x, y, size, font })
     }
 
-    drawText(`${firstname} ${lastname}`, 119, 696)
-    drawText(birthday, 119, 674)
-    drawText(placeofbirth, 297, 674)
-    drawText(`${address} ${zipcode} ${city}`, 133, 652)
+    drawText(`${firstname} ${lastname}`, 107, 657)
+    drawText(birthday, 107, 627)
+    drawText(placeofbirth, 240, 627)
+    drawText(`${address} ${zipcode} ${city}`, 124, 596)
 
     reasons
       .split(', ')
       .forEach(reason => {
-        drawText('x', 78, ys[reason] - 2, 18)
+        drawText('x', 59, ys[reason], 12)
       })
 
     let locationSize = getIdealFontSize(font, profile.city, 83, 7, 11)
@@ -100,9 +103,9 @@ export async function generatePdf(profile, reasons, pdfBase) {
       locationSize = 7
     }
 
-    drawText(profile.city, 105, 177, locationSize)
-    drawText(`${nextdatesortie}`, 91, 153, 11)
-    drawText(`${nextheuresortie}`, 264, 153, 11)
+    drawText(profile.city, 93, 122, locationSize)
+    drawText(`${nextdatesortie}`, 76, 92, 11)
+    drawText(`${nextheuresortie}`, 246, 92, 11)
 
     // const shortCreationDate = `${creationDate.split('/')[0]}/${
     //   creationDate.split('/')[1]
@@ -113,29 +116,33 @@ export async function generatePdf(profile, reasons, pdfBase) {
     // drawText('Date de création:', 479, 130, 6)
     // drawText(`${creationDate} à ${creationHour}`, 470, 124, 6)
 
+    const qrTitle1 = 'QR-code contenant les informations '
+    const qrTitle2 = 'de votre attestation numérique'
+
     const generatedQR = await generateQR(data)
 
     const qrImage = await pdfDoc.embedPng(generatedQR)
 
+    page1.drawText(qrTitle1 + '\n' + qrTitle2, { x: 415, y: 135, size: 9, font, lineHeight: 10, color: rgb(1, 1, 1) })
+
     page1.drawImage(qrImage, {
       x: page1.getWidth() - 156,
-      y: 100,
+      y: 25,
       width: 92,
       height: 92,
     })
 
     pdfDoc.addPage()
     const page2 = pdfDoc.getPages()[2 * i + 1]
+    page2.drawText(qrTitle1 + qrTitle2, { x: 50, y: page2.getHeight() - 70, size: 11, font, color: rgb(1, 1, 1) })
     page2.drawImage(qrImage, {
       x: 50,
-      y: page2.getHeight() - 350,
+      y: page2.getHeight() - 390,
       width: 300,
       height: 300,
     })
 
   }
-
-
   const pdfBytes = await pdfDoc.save()
 
   return new Blob([pdfBytes], { type: 'application/pdf' })

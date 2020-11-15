@@ -262,7 +262,7 @@ input[type=number] {
 }
 
 .exemple {
-  margin-top: 0.2em;
+  margin-bottom: 0;
   font-style: italic;
   color: #999999;
   height: 1em;
@@ -362,6 +362,11 @@ input[type=number] {
 
 .btn-attestation:hover {
   background-color: #3031C1;
+}
+
+.btn-clear-data {
+    margin: 30px auto;
+    max-width: 400px;
 }
 
 .github {
@@ -649,6 +654,10 @@ input[type=number] {
   color: #030494;
   background-color: #caf8ff;
   border-color: #caf8ff;
+}
+
+.basis-100 {
+  flex-basis: 100%;
 }
 
 .btn-info {
