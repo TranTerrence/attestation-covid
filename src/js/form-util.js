@@ -62,9 +62,10 @@ function validateAriaFields() {
     .includes(true)
 }
 
-function updateSecureLS(formInputs) {
+function updateSecureLS(formInputs, reasonInputs) {
   if (wantDataToBeStored() === true) {
     secureLS.set('profile', getProfile(formInputs))
+    secureLS.set('reason', getReasonsObject(reasonInputs))
   } else {
     clearSecureLS()
   }
@@ -134,8 +135,18 @@ export function getReasons(reasonInputs) {
   return reasons
 }
 
+export function getReasonsObject(reasonInputs) {
+  return reasonInputs
+    .filter((reason) => reason.checked)
+    .reduce((map, reason) => {
+      map[reason.value] = reason.checked
+      return map
+    }, {})
+}
+
 export function prepareInputs(formInputs, reasonInputs, reasonFieldset, reasonAlert, snackbar, releaseDateInput) {
   const lsProfile = secureLS.get('profile')
+  const lsReason = secureLS.get('reason')
   const currentDate = new Date()
   const formattedDate = getFormattedDate(currentDate)
   const formattedTime = currentDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
@@ -151,12 +162,16 @@ export function prepareInputs(formInputs, reasonInputs, reasonFieldset, reasonAl
     if (input.name === 'heuresortie') {
       input.value = formattedTime
     }
+    if (input.name === 'field-reason') {
+      if (lsReason)
+        input.checked = lsReason[input.value]
+    }
 
     const exempleElt = input.parentNode.parentNode.querySelector('.exemple')
     if (input.placeholder && exempleElt) {
       input.addEventListener('input', (event) => {
         if (input.value) {
-          updateSecureLS(formInputs)
+          updateSecureLS(formInputs, reasonInputs)
           exempleElt.innerHTML = 'ex.&nbsp;: ' + input.placeholder
         } else {
           exempleElt.innerHTML = ''
@@ -188,7 +203,7 @@ export function prepareInputs(formInputs, reasonInputs, reasonFieldset, reasonAl
     showSnackbar(clearDataSnackbar, 3000)
   })
   $('#field-storedata').addEventListener('click', () => {
-    updateSecureLS(formInputs)
+    updateSecureLS(formInputs, reasonInputs)
   })
   $('#generate-btn').addEventListener('click', async (event) => {
     event.preventDefault()
@@ -205,7 +220,7 @@ export function prepareInputs(formInputs, reasonInputs, reasonFieldset, reasonAl
     if (invalid) {
       return
     }
-    updateSecureLS(formInputs)
+    updateSecureLS(formInputs, reasonInputs)
     const pdfBlob = await generatePdf(getProfile(formInputs), reasons, pdfBase)
 
     const creationInstant = new Date()
@@ -226,7 +241,6 @@ export function prepareForm() {
   const reasonFieldset = $('#reason-fieldset')
   const reasonAlert = reasonFieldset.querySelector('.msg-alert')
   const releaseDateInput = $('#field-datesortie')
-  const releaseTimeInput = $('#field-heuresortie')
   setReleaseDateTime(releaseDateInput)
   prepareInputs(formInputs, reasonInputs, reasonFieldset, reasonAlert, snackbar, releaseDateInput)
 }
