@@ -55,8 +55,8 @@ export async function generatePdf(profile, reasons, pdfBase) {
   pdfDoc.setProducer('DNUM/SDIT')
   pdfDoc.setCreator('')
   pdfDoc.setAuthor("Ministère de l'intérieur")
-  for (var i = 0; i < duree; i++) {
-    const nextdate = moment(datesortie + " " + heuresortie, 'DD/MM/YYYY HH:mm').add(3 * i, 'hours');
+  for (var i = 0; i < duree / 3; i++) {
+    const nextdate = moment(datesortie + " " + heuresortie, 'DD/MM/YYYY HH:mm').add(i * 3, 'hours');
     const nextheuresortie = nextdate.format('HH:mm');
     const nextdatesortie = nextdate.format('DD/MM/YYYY');
     const data = [
